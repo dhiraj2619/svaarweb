@@ -1,6 +1,7 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import Preloader from "./components/Preloader";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <Preloader />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

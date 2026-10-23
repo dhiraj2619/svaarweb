@@ -155,6 +155,297 @@ body {
   }
 }
 
+/* ---------- Preloader ---------- */
+/* stripes slide in along their own diagonal, then the letters rise in one by one */
+.preloader-stripe {
+  animation: preloaderStripe 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.preloader-letter {
+  animation: preloaderLetter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.preloader-bar {
+  transform-origin: left;
+  animation: preloaderBar 2.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes preloaderStripe {
+  from {
+    transform: translate(-110px, 110px);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+
+/* letters start below the baseline; the svg viewport clips them so they appear to rise out of a slot */
+@keyframes preloaderLetter {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes preloaderBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* exit: logo lifts away, then the white curtain rolls up with a curved hem, red one just behind */
+.preloader-curtain::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: -10%;
+  width: 120%;
+  height: 14vh;
+  background: inherit;
+  border-radius: 0 0 50% 50%;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.preloader-out .preloader-content {
+  animation: preloaderContentOut 0.55s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.preloader-out .preloader-curtain-white {
+  animation: preloaderCurtain 1.1s cubic-bezier(0.76, 0, 0.24, 1) 0.4s forwards;
+}
+
+.preloader-out .preloader-curtain-red {
+  animation: preloaderCurtain 1.1s cubic-bezier(0.76, 0, 0.24, 1) 0.55s forwards;
+}
+
+.preloader-out .preloader-curtain::after {
+  animation: preloaderHem 1.1s cubic-bezier(0.76, 0, 0.24, 1) 0.4s forwards;
+}
+
+@keyframes preloaderContentOut {
+  to {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+}
+
+@keyframes preloaderCurtain {
+  to {
+    transform: translateY(calc(-100% - 14vh));
+  }
+}
+
+/* hem bulges while moving, flattens as it leaves */
+@keyframes preloaderHem {
+  50% {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.3);
+  }
+}
+
+/* ---------- Clients: cards flip from a blank panel to the logo on scroll ---------- */
+.client-cell {
+  perspective: 900px;
+}
+
+.client-card {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.client-card-in {
+  transform: rotateY(0deg);
+}
+
+.client-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.client-face-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-card {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---------- Focus slider: strip flip + text reveal ---------- */
+.focus-stage {
+  perspective: 1800px;
+}
+
+.focus-strip {
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.focus-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.focus-face-back {
+  transform: rotateY(180deg);
+}
+
+.focus-reveal {
+  animation: focusReveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.focus-fade {
+  animation: focusFade 0.8s ease-out both;
+}
+
+.focus-icon {
+  animation: focusIcon 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.focus-line {
+  transform-origin: top;
+  animation: focusLine 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.focus-divider {
+  transform-origin: left;
+  animation: focusDivider 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* giant outlined initial drifts in behind the heading */
+.focus-letter {
+  animation: focusLetter 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* autoplay progress under the active value tab */
+.focus-progress {
+  transform-origin: left;
+  animation: focusProgress linear forwards;
+}
+
+.focus-progress-paused {
+  animation-play-state: paused;
+}
+
+@keyframes focusLetter {
+  from {
+    opacity: 0;
+    transform: translate(-60px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+@keyframes focusProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* outgoing text slides up and fades while the strips start flipping */
+.focus-text-out {
+  animation: focusOut 0.45s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes focusReveal {
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes focusFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes focusIcon {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes focusLine {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes focusDivider {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes focusOut {
+  to {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-strip {
+    transition: none;
+  }
+  .focus-reveal,
+  .focus-fade,
+  .focus-icon,
+  .focus-line,
+  .focus-divider,
+  .focus-letter,
+  .focus-text-out {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-turn,
   .page-turn::after,

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { contact } from "../data/contact";
 
 const quickLinks = [
   { label: "Projects", href: "#projects" },
@@ -20,12 +21,6 @@ const technologies = [
   "Zero Liquid Discharge",
 ];
 
-// Placeholder contact details — replace with SVAAR's real ones
-const contact = {
-  address: "Plot No. 00, Industrial Area, City, State – 000000, India",
-  phone: "+91 00000 00000",
-  email: "info@svaar.com",
-};
 
 const socials = [
   {
@@ -80,38 +75,9 @@ function ContactRow({ icon, children }) {
 
 export default function Footer() {
   return (
-    <footer id="contact" className="relative bg-[#f3f5f8]">
-      {/* ---------------- CTA band ---------------- */}
-      {/* AOS on the outer wrapper — the inner box already uses a transform to overlap the section above */}
-      <div className="relative mx-auto max-w-[1320px] px-5 md:px-10" data-aos="zoom-in-up" data-aos-offset="0">
-        <div className="relative -translate-y-1/2 overflow-hidden rounded-[24px] bg-[linear-gradient(120deg,#ec3a3e_0%,#d9252a_60%,#b81b20_100%)] px-7 py-10 shadow-[0_24px_50px_-18px_rgba(200,30,35,0.55)] md:px-12 md:py-12">
-          <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:repeating-linear-gradient(-60deg,#fff_0_1px,transparent_1px_26px)]" />
-          <span className="pointer-events-none absolute -right-4 top-0 h-full w-[140px] bg-white/10 [clip-path:polygon(60%_0,100%_0,40%_100%,0_100%)]" />
-
-          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/80">Have a project in mind?</p>
-              <h2 className="mt-2 text-[26px] font-bold leading-tight text-white sm:text-[32px] lg:text-[36px]">
-                Let&apos;s engineer your next plant.
-              </h2>
-            </div>
-            <a
-              href={`mailto:${contact.email}`}
-              className="group inline-flex items-center gap-3 self-start rounded-full bg-white py-2 pl-6 pr-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-[#262d3b] shadow-lg transition-colors hover:text-brand md:self-auto"
-            >
-              Get in Touch
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white transition-transform duration-300 group-hover:rotate-45">
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M7 17 17 7M9 7h8v8" />
-                </svg>
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-
+    <footer className="relative border-t border-[#e1e5eb] bg-[#f3f5f8]">
       {/* ---------------- Columns ---------------- */}
-      <div className="mx-auto -mt-6 grid max-w-[1320px] gap-12 px-5 pb-14 md:grid-cols-2 md:px-10 lg:grid-cols-[1.3fr_0.8fr_1fr_1.2fr] lg:gap-10">
+      <div className="mx-auto grid max-w-[1320px] gap-12 px-5 pb-14 pt-16 md:grid-cols-2 md:px-10 lg:grid-cols-[1.3fr_0.8fr_1fr_1.2fr] lg:gap-10">
         <div data-aos="fade-up">
           <Link href="/" aria-label="SVAAR home">
             <Image src="/logo/svaarlogo.png" alt="SVAAR" width={250} height={39} className="h-9 w-auto" />
