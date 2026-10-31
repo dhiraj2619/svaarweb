@@ -18,7 +18,7 @@ export default function SmoothScroll({ children }) {
           smoothWheel: true,
           autoRaf: true,
           // smooth-scroll in-page links (#about, #projects…) and clear the sticky navbar
-          anchors: { offset: -68 },
+          anchors: { offset: -88 },
         });
 
     // let other components (e.g. the mobile drawer) pause/resume scrolling

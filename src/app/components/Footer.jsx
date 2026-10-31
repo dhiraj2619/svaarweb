@@ -4,7 +4,7 @@ import { contact } from "../data/contact";
 
 const quickLinks = [
   { label: "Projects", href: "#projects" },
-  { label: "Process Technologies", href: "#process-technologies" },
+  { label: "Process Technologies", href: "#technologies" },
   { label: "Industries", href: "#industries" },
   { label: "Infrastructure", href: "#infrastructure" },
   { label: "About Us", href: "#about" },
@@ -121,7 +121,7 @@ export default function Footer() {
           <ul className="mt-6 space-y-3">
             {technologies.map((t) => (
               <li key={t}>
-                <a href="#process-technologies" className="group inline-flex items-center gap-2 text-[14px] text-[#555d6d] transition-colors hover:text-brand">
+                <a href="#technologies" className="group inline-flex items-center gap-2 text-[14px] text-[#555d6d] transition-colors hover:text-brand">
                   <span className="h-[2px] w-0 bg-brand transition-all duration-300 group-hover:w-3" />
                   {t}
                 </a>

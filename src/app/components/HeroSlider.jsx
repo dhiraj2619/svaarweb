@@ -1,180 +1,169 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import NetworkGrid from "./NetworkGrid";
 
 const slides = [
     {
         image: "/banners/banner1.jpg",
         eyebrow: "Process Engineering • Pilot Plants • Scale-Up",
         title: ["Engineering Processes.", "Enabling Scale."],
-        subtitle: "From Pilot Plants to Industrial Production",
+        cta: { label: "Read more", href: "#about" },
     },
     {
         image: "/banners/banner2.jpg",
         eyebrow: "Process Technologies",
         title: ["Proven Technologies.", "Precise Execution."],
-        subtitle: "Reaction, Distillation, Extraction & Separation Systems",
+        cta: { label: "Read more", href: "#technologies" },
     },
     {
         image: "/banners/banner3.jpg",
         eyebrow: "Infrastructure • Fabrication",
         title: ["Built for Performance.", "Designed to Last."],
-        subtitle: "Modular Skids, Plants & Turnkey Infrastructure",
+        cta: { label: "Read more", href: "#industries" },
     },
     {
         image: "/banners/banner4.jpg",
         eyebrow: "Projects • Execution",
         title: ["Delivering Projects.", "Driving Growth."],
-        subtitle: "End-to-End Engineering for Process Industries",
+        cta: { label: "Read more", href: "#projects" },
     },
 ];
 
-const AUTOPLAY_MS = 6500;
-const TURN_MS = 1300;
+const AUTOPLAY_MS = 6000;
+
+function Arrow({ dir }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-6 w-6" aria-hidden="true">
+            <path d={dir === "prev" ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
 
 export default function HeroSlider() {
     const [current, setCurrent] = useState(0);
-    // the slide currently being "turned away" like a page
-    const [turning, setTurning] = useState(null);
     const [paused, setPaused] = useState(false);
-    const turnTimer = useRef(null);
 
-    const goTo = useCallback(
-        (index) => {
-            if (index === current || turning !== null) return;
-            setTurning(current);
-            setCurrent(index);
-            clearTimeout(turnTimer.current);
-            turnTimer.current = setTimeout(() => setTurning(null), TURN_MS);
-        },
-        [current, turning]
-    );
+    const goTo = useCallback((index) => {
+        setCurrent((index + slides.length) % slides.length);
+    }, []);
 
     useEffect(() => {
         if (paused) return;
-        const id = setTimeout(() => goTo((current + 1) % slides.length), AUTOPLAY_MS);
+        const id = setTimeout(() => goTo(current + 1), AUTOPLAY_MS);
         return () => clearTimeout(id);
     }, [current, paused, goTo]);
 
-    useEffect(() => () => clearTimeout(turnTimer.current), []);
-
-    const slide = slides[current];
-
     return (
         <section
-            className="relative h-[calc(100svh-var(--nav-height))] min-h-[560px] w-full overflow-hidden bg-[#eef1f5]"
+            className="relative h-[calc(100svh-var(--nav-height)-var(--topbar-height))] min-h-[520px] w-full overflow-hidden bg-[#1a1d22]"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             aria-roledescription="carousel"
             aria-label="Highlights"
         >
-            {/* ---------- Image stage with page-turn ---------- */}
-            <div className="hero-stage absolute inset-0">
-                {/* active slide (underneath) */}
-                <div key={`active-${current}`} className="absolute inset-0 overflow-hidden">
-                    <div className="hero-zoom absolute inset-0">
+            {/* Slides stacked; the active one fades in over the rest */}
+            {slides.map((s, i) => {
+                const isActive = i === current;
+                const Heading = i === 0 ? "h1" : "h2";
+                return (
+                    <div
+                        key={s.image}
+                        className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
+                            isActive ? "z-10 opacity-100" : "z-0 opacity-0"
+                        }`}
+                        aria-hidden={!isActive}
+                    >
                         <Image
-                            src={slide.image}
+                            src={s.image}
                             alt=""
                             fill
-                            priority={current === 0}
+                            priority={i === 0}
                             sizes="100vw"
                             quality={80}
-                            className="object-cover object-[65%_center]"
+                            className="object-cover"
                         />
-                    </div>
-                    {turning !== null && <div className="page-under-shadow absolute inset-0" />}
-                </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
 
-                {/* outgoing slide flipping away like a page */}
-                {turning !== null && (
-                    <div key={`turn-${turning}`} className="page-turn absolute inset-0 z-10 overflow-hidden">
-                        <Image
-                            src={slides[turning].image}
-                            alt=""
-                            fill
-                            sizes="100vw"
-                            quality={80}
-                            className="object-cover object-[65%_center]"
-                        />
+                        <div className="relative mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-10 lg:px-16">
+                            <a
+                                href={s.cta.href}
+                                tabIndex={isActive ? 0 : -1}
+                                className="w-fit text-[14px] text-white underline underline-offset-4 sm:text-[17px]"
+                            >
+                                {s.eyebrow}
+                            </a>
+                            <Heading className="mt-6 max-w-[820px] text-[32px] font-bold uppercase leading-[1.12] tracking-[0.01em] text-white sm:text-[44px] lg:text-[58px]">
+                                {s.title.map((line) => (
+                                    <span key={line} className="block">
+                                        {line}
+                                    </span>
+                                ))}
+                            </Heading>
+                            <a
+                                href={s.cta.href}
+                                tabIndex={isActive ? 0 : -1}
+                                className="mt-10 w-fit rounded-full bg-brand px-7 py-3 text-[16px] font-medium text-white transition-colors hover:bg-brand-dark"
+                            >
+                                {s.cta.label}
+                            </a>
+                        </div>
                     </div>
-                )}
+                );
+            })}
 
-                {/* preload the rest so turns never show a blank page */}
-                <div className="hidden">
-                    {slides.map((s, i) =>
-                        i !== current && i !== turning ? (
-                            <Image key={s.image} src={s.image} alt="" width={16} height={9} sizes="100vw" />
-                        ) : null
-                    )}
-                </div>
+            {/* Prev / next */}
+            <div className="absolute bottom-20 right-5 z-20 flex gap-1.5 md:right-10 lg:right-16">
+                <button
+                    type="button"
+                    onClick={() => goTo(current - 1)}
+                    aria-label="Previous slide"
+                    className="grid h-14 w-14 place-items-center bg-white/95 text-[#1a1a1a] transition-colors hover:bg-white hover:text-brand"
+                >
+                    <Arrow dir="prev" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => goTo(current + 1)}
+                    aria-label="Next slide"
+                    className="grid h-14 w-14 place-items-center bg-white/95 text-[#1a1a1a] transition-colors hover:bg-white hover:text-brand"
+                >
+                    <Arrow dir="next" />
+                </button>
             </div>
 
-            {/* ---------- White diagonal panel with grid ---------- */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-full overflow-hidden bg-[#f2f4f7]/95 md:w-[42%] md:[clip-path:polygon(0_0,100%_0,58%_100%,0_100%)] max-md:bg-[#f2f4f7]/60">
-                <NetworkGrid className="absolute inset-0 h-full w-full" />
-            </div>
-
-            {/* ---------- Caption ---------- */}
-            <div className="relative z-30 flex h-full flex-col justify-center">
-                <div key={`caption-${current}`} className="caption-in relative w-full md:w-[56%] lg:w-[53%]">
-                    {/* thin accent stripe — runs parallel to the box's slanted edge (100% → 82%), extending below it */}
-                    <span className="absolute left-0 top-0 hidden h-[125%] w-full bg-brand/85 [clip-path:polygon(97.1%_24%,98.9%_24%,81.8%_100%,80%_100%)] md:block" />
-                    <div className="relative bg-brand py-9 pl-5 pr-12 sm:py-10 md:py-11 md:pl-10 md:pr-24 lg:pl-[9%] md:[clip-path:polygon(0_0,100%_0,82%_100%,0_100%)]">
-                        <p
-                            className="caption-line text-[10px] font-medium uppercase tracking-[0.2em] text-white/90 sm:text-[11px]"
-                            style={{ animationDelay: "0.55s" }}
-                        >
-                            {slide.eyebrow}
-                        </p>
-                        <span
-                            className="caption-line mt-4 block h-[2px] w-8 bg-white/85"
-                            style={{ animationDelay: "0.6s" }}
-                        />
-                        <h1 className="mt-5 text-[30px] font-semibold leading-[1.18] tracking-[-0.01em] text-white sm:text-[38px] lg:text-[44px] xl:text-[48px]">
-                            {slide.title.map((line, i) => (
-                                <span
-                                    key={line}
-                                    className="caption-line block"
-                                    style={{ animationDelay: `${0.65 + i * 0.12}s` }}
-                                >
-                                    {line}
-                                </span>
-                            ))}
-                        </h1>
-                        <p
-                            className="caption-line mt-4 text-[15px] font-normal text-white sm:text-[17px] lg:text-[19px]"
-                            style={{ animationDelay: "0.9s" }}
-                        >
-                            {slide.subtitle}
-                        </p>
-                    </div>
-                </div>
-
-                {/* ---------- Pagination ---------- */}
-                <div className="mt-8 flex items-center gap-2.5 pl-5 md:pl-10 lg:pl-[4.8%]">
-                    {slides.map((_, i) => {
-                        const isActive = i === current;
-                        return (
+            {/* Pagination: slide number + progress bars */}
+            <div className="absolute bottom-8 left-0 right-0 z-20">
+                <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-5 md:px-10 lg:px-16">
+                    <span className="w-6 text-[14px] font-semibold text-white">
+                        {String(current + 1).padStart(2, "0")}
+                    </span>
+                    <div className="flex gap-1.5">
+                        {slides.map((_, i) => (
                             <button
                                 key={i}
                                 type="button"
                                 onClick={() => goTo(i)}
                                 aria-label={`Go to slide ${i + 1}`}
-                                aria-current={isActive}
-                                className="group flex h-6 items-center"
+                                aria-current={i === current}
+                                className="flex h-5 items-center"
                             >
-                                <span
-                                    className={`block h-2.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive
-                                        ? "w-9 bg-brand shadow-[0_3px_10px_rgba(229,43,47,0.4)]"
-                                        : "w-2.5 bg-[#c3cad6] group-hover:bg-brand/60"
-                                        }`}
-                                />
+                                <span className="relative block h-[3px] w-14 overflow-hidden bg-white/40 sm:w-20">
+                                    {i < current && <span className="absolute inset-0 bg-white" />}
+                                    {i === current && (
+                                        <span
+                                            key={current}
+                                            className="hero-progress absolute inset-0 bg-brand"
+                                            style={{
+                                                animationDuration: `${AUTOPLAY_MS}ms`,
+                                                animationPlayState: paused ? "paused" : "running",
+                                            }}
+                                        />
+                                    )}
+                                </span>
                             </button>
-                        );
-                    })}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
