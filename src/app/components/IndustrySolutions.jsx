@@ -32,8 +32,8 @@ export default function IndustrySolutions() {
     <section id="industries" className="relative isolate overflow-hidden py-24 lg:py-32">
       {/* Background photo */}
       <div className="absolute inset-0 -z-10" aria-hidden="true">
-        <Image src="/banners/banner3.jpg" alt="" fill sizes="100vw" className="object-cover" />
-        <div className="absolute inset-0 bg-[#111316]/30" />
+        <Image src="/banners/banner4.jpg" alt="" fill sizes="100vw" className="object-cover object-top" />
+        <div className="absolute inset-0 bg-[#111316]/10" />
       </div>
 
       <div className="mx-auto max-w-[1320px] px-5 md:px-10 lg:px-16" data-aos="fade-up">
