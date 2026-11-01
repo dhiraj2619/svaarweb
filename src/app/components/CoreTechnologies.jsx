@@ -13,7 +13,7 @@ export default function CoreTechnologies() {
   return (
     <section id="technologies" className="bg-[#f7f6f3] px-5 py-24 md:px-10 lg:px-16 lg:py-32">
       <div className="mx-auto max-w-[1320px]">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between" data-aos="fade-up">
           <div>
             <h2 className="text-[32px] font-normal leading-tight text-[#1a1a1a] sm:text-[40px] lg:text-[46px]">
               Our Core Technologies
@@ -29,9 +29,9 @@ export default function CoreTechnologies() {
           </a>
         </div>
 
-        <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {technologies.map((t) => (
-            <li key={t.title}>
+        <ul className="-mx-5 mt-12 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:mt-14 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4">
+          {technologies.map((t, i) => (
+            <li key={t.title} data-aos="fade-up" data-aos-delay={(i % 4) * 100} className="w-[80%] shrink-0 snap-start sm:w-auto">
               <a
                 href="#contact"
                 className="group flex h-full flex-col border border-[#e4e2dc] bg-white transition-colors hover:border-[#c9c6be]"
@@ -41,7 +41,7 @@ export default function CoreTechnologies() {
                     src={t.image}
                     alt={t.title}
                     fill
-                    sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                    sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 80vw"
                     className="object-cover"
                   />
                 </div>
@@ -60,10 +60,10 @@ export default function CoreTechnologies() {
           ))}
 
           {/* closing tile fills the last grid slot */}
-          <li>
+          <li data-aos="fade-up" data-aos-delay="300" className="w-[80%] shrink-0 snap-start sm:w-auto">
             <a
               href="#contact"
-              className="group flex h-full min-h-[300px] flex-col justify-between bg-[#1a1a1a] p-8 text-white transition-colors hover:bg-brand"
+              className="group flex h-full min-h-[300px] flex-col justify-between bg-[#232f3e] p-8 text-white transition-colors hover:bg-brand"
             >
               <span className="text-[13px] uppercase tracking-[0.16em] text-white/70">Custom solutions</span>
               <span>

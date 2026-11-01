@@ -1,26 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { contact } from "../data/contact";
+import { industries } from "../data/industries";
+import { technologies } from "../data/technologies";
 
-const quickLinks = [
-  { label: "Projects", href: "#projects" },
-  { label: "Process Technologies", href: "#technologies" },
-  { label: "Industries", href: "#industries" },
-  { label: "Infrastructure", href: "#infrastructure" },
+const companyLinks = [
   { label: "About Us", href: "#about" },
+  { label: "Projects", href: "#projects" },
+  { label: "Infrastructure", href: "#infrastructure" },
   { label: "Contact", href: "#contact" },
 ];
 
-const technologies = [
-  "Evaporation",
-  "Spray Drying",
-  "Fluid Bed Drying",
-  "Spin Flash Drying",
-  "Agitated Thin Film Drying",
-  "Process Equipment",
-  "Zero Liquid Discharge",
-];
-
+// Placeholder figure — matches StatsSection, replace with SVAAR's real number
+const experienceYears = 25;
 
 const socials = [
   {
@@ -36,7 +28,8 @@ const socials = [
   {
     label: "Instagram",
     href: "#",
-    path: "M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2ZM17.1 5.8a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2ZM12 2c-2.7 0-3 0-4.1.1C4.3 2.2 2.2 4.3 2.1 7.9 2 9 2 9.3 2 12s0 3 .1 4.1c.1 3.6 2.2 5.7 5.8 5.8 1.1.1 1.4.1 4.1.1s3 0 4.1-.1c3.6-.1 5.7-2.2 5.8-5.8.1-1.1.1-1.4.1-4.1s0-3-.1-4.1c-.1-3.6-2.2-5.7-5.8-5.8C15 2 14.7 2 12 2Z",
+    // outline glyph: rounded square, lens and flash dot
+    stroke: <><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" /></>,
   },
   {
     label: "YouTube",
@@ -51,109 +44,115 @@ async function CopyrightYear() {
   return new Date().getFullYear();
 }
 
-function Heading({ children }) {
+function Column({ title, children, className = "" }) {
   return (
-    <h3 className="text-[14px] font-bold uppercase tracking-[0.14em] text-[#262d3b]">
-      {children}
-      <span className="mt-3 block h-[2px] w-8 bg-brand" />
-    </h3>
+    <div className={className}>
+      <h3 className="border-b border-white/20 pb-4 text-[16px] font-semibold text-white sm:text-[18px]">{title}</h3>
+      <ul className="mt-6 space-y-3.5 text-[14px] text-white/70 sm:text-[15px]">{children}</ul>
+    </div>
   );
 }
 
-function ContactRow({ icon, children }) {
+function FooterLink({ href, children }) {
   return (
-    <li className="flex gap-3">
-      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fdecec] text-brand">
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          {icon}
-        </svg>
-      </span>
-      <span className="pt-1.5">{children}</span>
+    <li>
+      <a href={href} className="transition-colors hover:text-white">
+        {children}
+      </a>
     </li>
   );
 }
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-[#e1e5eb] bg-[#f3f5f8]">
-      {/* ---------------- Columns ---------------- */}
-      <div className="mx-auto grid max-w-[1320px] gap-12 px-5 pb-14 pt-16 md:grid-cols-2 md:px-10 lg:grid-cols-[1.3fr_0.8fr_1fr_1.2fr] lg:gap-10">
-        <div data-aos="fade-up">
-          <Link href="/" aria-label="SVAAR home">
-            <Image src="/logo/svaarlogo.png" alt="SVAAR" width={250} height={39} className="h-9 w-auto" />
-          </Link>
-          <p className="mt-6 max-w-[340px] text-[14px] leading-[1.75] text-[#555d6d]">
-            SVAAR Process Solutions Pvt. Ltd. is an ISO 9001:2015 company delivering evaporation, drying and
-            Zero Liquid Discharge solutions — from pilot plants to industrial production.
-          </p>
-          <div className="mt-7 flex gap-3">
-            {socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                aria-label={s.label}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfe3ea] bg-white text-[#4a5263] transition-all hover:-translate-y-0.5 hover:border-brand hover:bg-brand hover:text-white"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-                  <path d={s.path} />
-                </svg>
-              </a>
-            ))}
+    <footer id="contact" className="relative scroll-mt-[var(--nav-height)]">
+      {/* ---------------- Feature cards: sit half over the page, half over the dark footer ---------------- */}
+      <div className="relative bg-[#f7f6f3] px-5 md:px-10 lg:px-16">
+        <div className="absolute inset-x-0 bottom-0 top-1/2 bg-[#232f3e]" aria-hidden="true" />
+        <div className="relative mx-auto grid max-w-[1320px] gap-5 lg:grid-cols-[5fr_7fr] lg:items-start">
+          <div className="flex flex-col rounded-[24px] rounded-br-none bg-brand p-9 text-white sm:p-12 lg:min-h-[440px]">
+            <p className="max-w-[440px] text-[15px] font-semibold uppercase leading-[1.5] tracking-[0.06em]">
+              Process engineering company with more than
+            </p>
+            <p className="mt-8 text-[96px] font-light leading-none tracking-[-0.03em] text-transparent [-webkit-text-stroke:1.5px_white] sm:text-[120px]">
+              {experienceYears}
+            </p>
+            <p className="mt-6 text-[17px] text-white/85">years of experience</p>
+            <a
+              href="#about"
+              className="group mt-auto inline-flex w-fit items-center gap-2 pt-10 text-[16px] font-semibold"
+            >
+              Learn more
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true">
+                <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
           </div>
-        </div>
 
-        <div data-aos="fade-up" data-aos-delay="100">
-          <Heading>Quick Links</Heading>
-          <ul className="mt-6 space-y-3">
-            {quickLinks.map((l) => (
-              <li key={l.label}>
-                <a href={l.href} className="group inline-flex items-center gap-2 text-[14px] text-[#555d6d] transition-colors hover:text-brand">
-                  <span className="h-[2px] w-0 bg-brand transition-all duration-300 group-hover:w-3" />
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div data-aos="fade-up" data-aos-delay="200">
-          <Heading>Technologies</Heading>
-          <ul className="mt-6 space-y-3">
-            {technologies.map((t) => (
-              <li key={t}>
-                <a href="#technologies" className="group inline-flex items-center gap-2 text-[14px] text-[#555d6d] transition-colors hover:text-brand">
-                  <span className="h-[2px] w-0 bg-brand transition-all duration-300 group-hover:w-3" />
-                  {t}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div data-aos="fade-up" data-aos-delay="300">
-          <Heading>Contact Us</Heading>
-          <ul className="mt-6 space-y-4 text-[14px] leading-relaxed text-[#555d6d]">
-            <ContactRow icon={<><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" /><circle cx="12" cy="9" r="2.5" /></>}>
-              {contact.address}
-            </ContactRow>
-            <ContactRow icon={<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z" />}>
-              <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="hover:text-brand">{contact.phone}</a>
-            </ContactRow>
-            <ContactRow icon={<><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></>}>
-              <a href={`mailto:${contact.email}`} className="hover:text-brand">{contact.email}</a>
-            </ContactRow>
-          </ul>
+          <div className="rounded-[24px] rounded-br-none bg-[#e9e8e4] p-9 sm:p-12 lg:min-h-[400px]">
+            <h2 className="text-[24px] font-semibold text-[#1a1a1a] sm:text-[28px]">Follow SVAAR</h2>
+            <ul className="mt-8 grid gap-5 sm:mt-9 sm:grid-cols-2 sm:gap-6">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a href={s.href} className="group inline-flex items-center gap-5 text-[17px] font-semibold text-[#1a1a1a]">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full border-[1.5px] border-[#1a1a1a] transition-colors group-hover:border-brand group-hover:bg-brand group-hover:text-white">
+                      {s.stroke ? (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          {s.stroke}
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                          <path d={s.path} />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="transition-colors group-hover:text-brand">{s.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
-      {/* ---------------- Bottom bar ---------------- */}
-      <div className="border-t border-[#e1e5eb] bg-white">
-        <div className="mx-auto flex max-w-[1320px] flex-col items-center justify-between gap-3 px-5 py-5 text-[13px] text-[#6b7383] md:flex-row md:px-10">
+      {/* ---------------- Link columns ---------------- */}
+      <div className="bg-[#232f3e] px-5 pb-10 pt-20 md:px-10 lg:px-16">
+        <div className="mx-auto grid max-w-[1320px] grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4 lg:gap-10">
+          <Column title="Technologies">
+            {technologies.map((t) => (
+              <FooterLink key={t.title} href="#technologies">{t.title}</FooterLink>
+            ))}
+          </Column>
+
+          <Column title="Industries">
+            {industries.map((ind) => (
+              <FooterLink key={ind.title} href="#industries">{ind.title}</FooterLink>
+            ))}
+          </Column>
+
+          <Column title="Company">
+            {companyLinks.map((l) => (
+              <FooterLink key={l.label} href={l.href}>{l.label}</FooterLink>
+            ))}
+          </Column>
+
+          <Column title="Contact" className="col-span-2 lg:col-span-1">
+            <li className="leading-relaxed">{contact.address}</li>
+            <FooterLink href={`tel:${contact.phone.replace(/\s/g, "")}`}>{contact.phone}</FooterLink>
+            <FooterLink href={`mailto:${contact.email}`}>{contact.email}</FooterLink>
+          </Column>
+        </div>
+
+        {/* ---------------- Bottom bar ---------------- */}
+        <div className="mx-auto mt-16 flex max-w-[1320px] flex-col gap-5 border-t border-white/15 pt-8 text-[13px] text-white/55 md:flex-row md:items-center md:justify-between">
+          <Link href="/" aria-label="SVAAR home">
+            <Image src="/logo/svaarlogo.png" alt="SVAAR" width={250} height={39} className="h-8 w-auto brightness-0 invert" />
+          </Link>
           <p>© <CopyrightYear /> SVAAR Process Solutions Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <a href="#" className="hover:text-brand">Privacy Policy</a>
-            <span className="h-3 w-px bg-[#d9dde5]" />
-            <a href="#" className="hover:text-brand">Terms of Use</a>
+            <a href="#" className="hover:text-white">Privacy Policy</a>
+            <span className="h-3 w-px bg-white/25" />
+            <a href="#" className="hover:text-white">Terms of Use</a>
           </div>
         </div>
       </div>

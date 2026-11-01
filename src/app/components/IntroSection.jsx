@@ -1,7 +1,7 @@
 export default function IntroSection() {
   return (
     <section id="about" className="bg-white px-5 py-24 md:px-10 lg:py-36">
-      <div className="mx-auto max-w-[870px]">
+      <div className="mx-auto max-w-[870px]" data-aos="fade-up">
         <h2 className="text-[32px] font-normal leading-[1.25] tracking-[-0.01em] text-[#1a1a1a] sm:text-[44px] lg:text-[54px]">
           A process engineering partner that takes chemistry from the lab to industrial scale
         </h2>

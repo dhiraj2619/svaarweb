@@ -1,245 +1,229 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
+import { projects } from "../data/projects";
 
-// Placeholder data — replace images with real project photos (e.g. /projects/mee-gujarat.jpg in /public)
-const projects = [
-  {
-    image: "/banners/banner1.jpg",
-    category: "Evaporation",
-    title: "Multiple Effect Evaporator Plant",
-    location: "Ankleshwar, Gujarat",
-    capacity: "50 KLD",
-    industry: "Pharmaceutical",
-  },
-  {
-    image: "/banners/banner2.jpg",
-    category: "Spray Drying",
-    title: "Spray Dryer for Specialty Chemicals",
-    location: "Tarapur, Maharashtra",
-    capacity: "500 kg/hr",
-    industry: "Chemical",
-  },
-  {
-    image: "/banners/banner3.jpg",
-    category: "Zero Liquid Discharge",
-    title: "ZLD System with MVR Evaporator",
-    location: "Tiruppur, Tamil Nadu",
-    capacity: "120 KLD",
-    industry: "Textile",
-  },
-  {
-    image: "/banners/banner4.jpg",
-    category: "ATFD",
-    title: "Agitated Thin Film Dryer Unit",
-    location: "Vapi, Gujarat",
-    capacity: "8 m² HTA",
-    industry: "Agrochemical",
-  },
-  {
-    image: "/banners/banner1.jpg",
-    category: "Fluid Bed Drying",
-    title: "Fluid Bed Dryer & Cooler Line",
-    location: "Hyderabad, Telangana",
-    capacity: "1.2 TPH",
-    industry: "Food & Nutrition",
-  },
-];
+const AUTOPLAY_MS = 6000;
+const pad = (n) => String(n).padStart(2, "0");
+const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
-function Arrow({ dir = "right" }) {
+function Arrow({ dir = "right", className = "h-5 w-5" }) {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {dir === "right" ? <path d="M5 12h14M13 6l6 6-6 6" /> : <path d="M19 12H5M11 6l-6 6 6 6" />}
     </svg>
   );
 }
 
-function ProjectCard({ project, index }) {
+function Spec({ label, value }) {
   return (
-    <article className="group relative h-[440px] w-[85%] shrink-0 snap-start overflow-hidden rounded-[20px] bg-[#1b2029] shadow-[0_14px_34px_rgba(20,28,45,0.14)] transition-shadow duration-500 hover:shadow-[0_22px_48px_rgba(20,28,45,0.22)] sm:w-[calc((100%-24px)/2)] lg:h-[500px] lg:w-[calc((100%-48px)/3)]">
-      <Image
-        src={project.image}
-        alt={project.title}
-        fill
-        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 85vw"
-        className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
-      />
-
-      {/* base gradient for legibility */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(18,22,30,0.95)_0%,rgba(18,22,30,0.55)_40%,rgba(18,22,30,0)_70%)]" />
-      {/* red wash on hover */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(229,43,47,0.9)_0%,rgba(229,43,47,0.35)_45%,rgba(229,43,47,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-      {/* index + category */}
-      <div className="absolute left-6 top-6 flex items-center overflow-hidden rounded-full bg-white/95 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-[0_4px_14px_rgba(20,28,45,0.15)] backdrop-blur">
-        <span className="bg-brand px-3 py-1.5 text-white">{String(index + 1).padStart(2, "0")}</span>
-        <span className="px-3.5 py-1.5 text-[#262d3b]">{project.category}</span>
-      </div>
-
-      {/* content */}
-      <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-        <p className="flex items-center gap-2 text-[12.5px] text-white/75">
-          <svg viewBox="0 0 24 24" className="h-4 w-4 text-brand transition-colors group-hover:text-white" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" />
-            <circle cx="12" cy="9" r="2.5" />
-          </svg>
-          {project.location}
-        </p>
-        <h3 className="mt-2 text-[21px] font-semibold leading-snug text-white lg:text-[23px]">{project.title}</h3>
-
-        {/* specs slide up on hover (always visible on touch) */}
-        <div className="grid grid-rows-[1fr] transition-all duration-500 lg:grid-rows-[0fr] lg:group-hover:grid-rows-[1fr]">
-          <div className="overflow-hidden">
-            <div className="mt-4 flex gap-6 border-t border-white/20 pt-4">
-              <div>
-                <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/60">Capacity</p>
-                <p className="mt-1 text-[15px] font-semibold text-white">{project.capacity}</p>
-              </div>
-              <div>
-                <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/60">Industry</p>
-                <p className="mt-1 text-[15px] font-semibold text-white">{project.industry}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* view button */}
-      <a
-        href="#projects"
-        aria-label={`View ${project.title}`}
-        className="absolute bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white shadow-lg transition-all duration-500 group-hover:rotate-[-45deg] group-hover:bg-white group-hover:text-brand lg:bottom-7 lg:right-7"
-      >
-        <Arrow />
-      </a>
-
-      {/* red corner slash */}
-      <span className="pointer-events-none absolute right-0 top-0 h-full w-full bg-brand [clip-path:polygon(92%_0,100%_0,100%_7%)] transition-all duration-500 group-hover:[clip-path:polygon(84%_0,100%_0,100%_14%)]" />
-    </article>
+    <div className="border-t border-white/15 pt-3">
+      <dt className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/50">{label}</dt>
+      <dd className="mt-1 text-[16px] font-semibold text-white">{value}</dd>
+    </div>
   );
 }
 
 export default function ProjectsSection() {
-  const trackRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
+  const [filter, setFilter] = useState("All");
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  const update = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    const max = el.scrollWidth - el.clientWidth;
-    setProgress(max > 0 ? el.scrollLeft / max : 1);
-    setAtStart(el.scrollLeft <= 4);
-    setAtEnd(el.scrollLeft >= max - 4);
-  }, []);
+  const list = filter === "All" ? projects : projects.filter((p) => p.category === filter);
+  const current = list[active] ?? list[0];
 
-  useEffect(() => {
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [update]);
-
-  const scrollBy = (dir) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector("article");
-    const step = card ? card.offsetWidth + 24 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  const go = (i) => setActive((i + list.length) % list.length);
+  const pickFilter = (c) => {
+    setFilter(c);
+    setActive(0);
   };
 
   return (
     <section id="projects" className="relative overflow-hidden bg-white py-20 lg:py-28">
-      {/* soft backdrop: warm glow top-left, cool tint bottom-right, faint blueprint grid */}
-      <div className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand/[0.07] blur-[110px]" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 h-[560px] w-[560px] rounded-full bg-[#9fb3d1]/20 blur-[120px]" />
-      <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(#eef1f5_1px,transparent_1px),linear-gradient(90deg,#eef1f5_1px,transparent_1px)] [background-size:80px_80px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" />
-      {/* light-grey band behind the lower half of the cards */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-[#f3f5f8]" />
-      <span className="pointer-events-none absolute right-0 top-0 h-[120px] w-[160px] bg-brand [clip-path:polygon(55%_0,100%_0,100%_45%,30%_100%,0_100%)]" />
-      {/* outlined watermark word */}
-      <span className="pointer-events-none absolute right-[4%] top-[70px] hidden select-none text-[150px] font-extrabold uppercase leading-none tracking-tight text-transparent [-webkit-text-stroke:1.5px_#e9ecf1] xl:block">
-        Projects
-      </span>
-
-      <div className="relative mx-auto max-w-[1320px] px-5 md:px-10">
-        {/* header */}
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <div data-aos="fade-up">
+      <div className="mx-auto max-w-[1320px] px-5 md:px-10">
+        {/* Header */}
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-[620px]">
             <div className="flex items-center gap-4">
               <span className="h-[2px] w-12 bg-brand" />
               <span className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#2a3140]">Our Portfolio</span>
             </div>
-            <h2 className="mt-5 text-[34px] font-bold leading-[1.12] tracking-[-0.015em] text-[#262d3b] sm:text-[42px] xl:text-[48px]">
-              Our Recent <span className="text-brand">Projects</span>
+            <h2 className="mt-5 text-[34px] font-bold leading-[1.1] tracking-[-0.015em] text-[#232f3e] sm:text-[44px] xl:text-[52px]">
+              Recent <span className="text-brand">projects</span>
             </h2>
-            <p className="mt-4 max-w-[520px] text-[15px] leading-[1.65] text-[#555d6d] md:text-[16px]">
-              Turnkey evaporation, drying and ZLD installations engineered, fabricated and commissioned
-              for leading process industries.
+            <p className="mt-4 text-[15px] leading-[1.65] text-[#555d6d] md:text-[17px]">
+              Turnkey evaporation, drying and ZLD plants we have engineered, fabricated and commissioned for leading
+              process industries.
             </p>
           </div>
 
-          <div className="flex items-center gap-3" data-aos="fade-left" data-aos-delay="150">
-            <button
-              type="button"
-              onClick={() => scrollBy(-1)}
-              disabled={atStart}
-              aria-label="Previous projects"
-              className="flex h-[52px] w-[52px] items-center justify-center rounded-full border border-[#d9dde5] bg-white text-[#262d3b] shadow-[0_4px_14px_rgba(20,28,45,0.06)] transition-all hover:border-brand hover:bg-brand hover:text-white disabled:pointer-events-none disabled:opacity-40"
-            >
-              <Arrow dir="left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollBy(1)}
-              disabled={atEnd}
-              aria-label="Next projects"
-              className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand text-white shadow-[0_8px_20px_rgba(229,43,47,0.35)] transition-all hover:bg-brand-dark disabled:pointer-events-none disabled:opacity-35"
-            >
-              <Arrow />
-            </button>
-          </div>
-        </div>
-
-        {/* track */}
-        <div
-          data-aos="fade-up"
-          data-aos-delay="200"
-          data-aos-duration="1000"
-          ref={trackRef}
-          onScroll={update}
-          className="-mx-4 mt-12 flex snap-x snap-mandatory scroll-px-4 gap-6 overflow-x-auto scroll-smooth px-4 pb-8 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {projects.map((p, i) => (
-            <ProjectCard key={p.title} project={p} index={i} />
-          ))}
-        </div>
-
-        {/* progress + CTA */}
-        <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between" data-aos="fade-up">
-          <div className="flex flex-1 items-center gap-5">
-            <div className="relative h-[3px] w-full max-w-[420px] overflow-hidden rounded-full bg-[#dfe3ea]">
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-brand transition-[width] duration-300"
-                style={{ width: `${Math.max(progress, 0.08) * 100}%` }}
-              />
-            </div>
-            <span className="text-[13px] font-semibold tabular-nums text-[#6b7383]">
-              {String(projects.length).padStart(2, "0")} Projects
-            </span>
-          </div>
-
-          <a
-            href="#projects"
-            className="group inline-flex items-center gap-3 self-start text-[14px] font-semibold uppercase tracking-[0.1em] text-[#262d3b] transition-colors hover:text-brand sm:self-auto"
+          {/* Filters */}
+          <div
+            role="group"
+            aria-label="Filter projects by technology"
+            className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] lg:mx-0 lg:max-w-[560px] lg:flex-wrap lg:justify-end lg:overflow-visible lg:px-0"
           >
-            View All Projects
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9dde5] bg-white transition-all group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-white">
-              <Arrow />
-            </span>
-          </a>
+            {categories.map((c) => (
+              <button
+                key={c}
+                type="button"
+                aria-pressed={filter === c}
+                onClick={() => pickFilter(c)}
+                className={`shrink-0 border px-4 py-2 text-[13px] font-medium transition-colors ${
+                  filter === c
+                    ? "border-[#232f3e] bg-[#232f3e] text-white"
+                    : "border-[#d9dde5] text-[#3a4150] hover:border-brand hover:text-brand"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Featured project */}
+        <div
+          className="mt-12 grid overflow-hidden bg-[#232f3e] lg:mt-16 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+         
+        >
+          {/* Image stack crossfades between projects */}
+          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[560px]">
+            {list.map((p) => (
+              <Image
+                key={p.title}
+                src={p.image}
+                alt={p === current ? p.title : ""}
+                fill
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                className={`object-cover transition-[opacity,transform] duration-[1200ms] ease-out ${
+                  p === current ? "scale-100 opacity-100" : "scale-105 opacity-0"
+                }`}
+              />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#232f3e]/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-[#232f3e]/40" />
+
+            <span className="absolute left-0 top-0 bg-brand px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white">
+              {current.category}
+            </span>
+            <span className="absolute bottom-5 left-5 text-[64px] font-bold leading-none text-white/90 tabular-nums lg:bottom-8 lg:left-8 lg:text-[96px]">
+              {pad(active + 1)}
+            </span>
+          </div>
+
+          {/* Details */}
+          <div className="flex flex-col p-6 text-white sm:p-10 lg:p-12">
+            <div key={current.title} className="industry-reveal flex-1">
+              <p className="flex items-center gap-2 text-[13px] text-white/60">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 text-brand" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" />
+                  <circle cx="12" cy="9" r="2.5" />
+                </svg>
+                {current.location}
+              </p>
+              <h3 className="mt-4 text-[26px] font-semibold leading-[1.2] sm:text-[32px]">{current.title}</h3>
+              <p className="mt-5 text-[15px] leading-[1.7] text-white/70 sm:text-[16px]">{current.text}</p>
+
+              <dl className="mt-8 grid grid-cols-3 gap-5">
+                <Spec label="Capacity" value={current.capacity} />
+                <Spec label="Industry" value={current.industry} />
+                <Spec label="Year" value={current.year} />
+              </dl>
+            </div>
+
+            {/* Controls */}
+            <div className="mt-10">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-[13px] font-semibold tabular-nums tracking-[0.12em] text-white/50">
+                  <span className="text-white">{pad(active + 1)}</span> / {pad(list.length)}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => go(active - 1)}
+                    disabled={list.length < 2}
+                    aria-label="Previous project"
+                    className="flex h-12 w-12 items-center justify-center border border-white/25 transition-colors hover:border-brand hover:bg-brand disabled:opacity-30"
+                  >
+                    <Arrow dir="left" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => go(active + 1)}
+                    disabled={list.length < 2}
+                    aria-label="Next project"
+                    className="flex h-12 w-12 items-center justify-center bg-brand transition-colors hover:bg-brand-dark disabled:opacity-30"
+                  >
+                    <Arrow />
+                  </button>
+                </div>
+              </div>
+
+              {/* Autoplay progress — advancing is driven by the bar's animation ending */}
+              <div className="mt-5 h-[2px] bg-white/15">
+                {list.length > 1 && (
+                  <span
+                    key={`${filter}-${active}`}
+                    onAnimationEnd={() => go(active + 1)}
+                    className="project-progress block h-full origin-left bg-brand"
+                    style={{ animationDuration: `${AUTOPLAY_MS}ms`, animationPlayState: paused ? "paused" : "running" }}
+                  />
+                )}
+              </div>
+
+              <a
+                href="#contact"
+                className="group mt-8 inline-flex items-center gap-3 text-[14px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:text-brand"
+              >
+                Discuss a similar project
+                <Arrow className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Thumbnails */}
+        <ul className="-mx-5 mt-4 flex gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 lg:grid-cols-6">
+          {list.map((p, i) => {
+            const isActive = p === current;
+            return (
+              <li key={p.title} className="w-[44%] shrink-0 sm:w-[30%] md:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setActive(i)}
+                  aria-label={`Show ${p.title}`}
+                  aria-current={isActive}
+                  className="group block w-full text-left"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#eef0f3]">
+                    <Image
+                      src={p.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 200px, (min-width: 768px) 33vw, 44vw"
+                      className={`object-cover transition-[transform,filter] duration-500 group-hover:scale-105 ${
+                        isActive ? "" : "grayscale-[60%]"
+                      }`}
+                    />
+                    <span
+                      className={`absolute inset-x-0 bottom-0 h-1 origin-left bg-brand transition-transform duration-500 ${
+                        isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    />
+                  </div>
+                  <p className={`mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] ${isActive ? "text-brand" : "text-[#8a91a0]"}`}>
+                    {pad(i + 1)} · {p.industry}
+                  </p>
+                  <p className={`mt-1 line-clamp-2 text-[14px] font-medium leading-snug ${isActive ? "text-[#232f3e]" : "text-[#555d6d]"}`}>
+                    {p.title}
+                  </p>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

@@ -40,38 +40,27 @@ body {
   }
 }
 
-/* ---------- Clients: cards flip from a blank panel to the logo on scroll ---------- */
-.client-cell {
-  perspective: 900px;
+/* ---------- Clients: logos scroll in a continuous loop, pause on hover ---------- */
+.clients-track {
+  animation: clientsMarquee 45s linear infinite;
 }
 
-.client-card {
-  position: relative;
-  height: 100%;
-  transform-style: preserve-3d;
-  transform: rotateY(180deg);
-  transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+.clients-marquee:hover .clients-track {
+  animation-play-state: paused;
 }
 
-.client-card-in {
-  transform: rotateY(0deg);
-}
-
-.client-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.client-face-back {
-  transform: rotateY(180deg);
+@keyframes clientsMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .client-card {
-    transition: none;
-    transform: none;
+  .clients-track {
+    animation: none;
   }
 }
 
@@ -233,3 +222,53 @@ body {
   }
 }
 
+
+/* ---------- Industry solutions: detail text rises in on industry change ---------- */
+.industry-reveal {
+  animation: industryReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industryReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-reveal {
+    animation: none;
+  }
+}
+
+/* ---------- Projects: autoplay progress bar (its animationend advances the slide) ---------- */
+.project-progress {
+  animation-name: projectProgress;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes projectProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-progress {
+    animation: none;
+  }
+}
+
+/* ---------- AOS: a short, subtle rise instead of the default 100px ---------- */
+/* doubled selector beats aos.css regardless of load order, but stays below its .aos-animate rule */
+[data-aos="fade-up"][data-aos="fade-up"] {
+  transform: translate3d(0, 30px, 0);
+}

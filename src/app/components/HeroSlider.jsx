@@ -1,29 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+
+// Placeholder stock photos (Pexels, free license) — swap for SVAAR plant photos in /public/banners/
+const px = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1920`;
 
 const slides = [
     {
-        image: "/banners/banner1.jpg",
+        image: px(5532845),
         eyebrow: "Process Engineering • Pilot Plants • Scale-Up",
         title: ["Engineering Processes.", "Enabling Scale."],
         cta: { label: "Read more", href: "#about" },
     },
     {
-        image: "/banners/banner2.jpg",
+        image: px(5884386),
         eyebrow: "Process Technologies",
         title: ["Proven Technologies.", "Precise Execution."],
         cta: { label: "Read more", href: "#technologies" },
     },
     {
-        image: "/banners/banner3.jpg",
+        image: px(8581897),
         eyebrow: "Infrastructure • Fabrication",
         title: ["Built for Performance.", "Designed to Last."],
         cta: { label: "Read more", href: "#industries" },
     },
     {
-        image: "/banners/banner4.jpg",
+        image: px(4883682),
         eyebrow: "Projects • Execution",
         title: ["Delivering Projects.", "Driving Growth."],
         cta: { label: "Read more", href: "#projects" },
@@ -43,6 +46,7 @@ function Arrow({ dir }) {
 export default function HeroSlider() {
     const [current, setCurrent] = useState(0);
     const [paused, setPaused] = useState(false);
+    const touchX = useRef(0);
 
     const goTo = useCallback((index) => {
         setCurrent((index + slides.length) % slides.length);
@@ -59,6 +63,11 @@ export default function HeroSlider() {
             className="relative h-[calc(100svh-var(--nav-height)-var(--topbar-height))] min-h-[520px] w-full overflow-hidden bg-[#1a1d22]"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
+            onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+            onTouchEnd={(e) => {
+                const dx = e.changedTouches[0].clientX - touchX.current;
+                if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+            }}
             aria-roledescription="carousel"
             aria-label="Highlights"
         >
@@ -113,7 +122,7 @@ export default function HeroSlider() {
             })}
 
             {/* Prev / next */}
-            <div className="absolute bottom-20 right-5 z-20 flex gap-1.5 md:right-10 lg:right-16">
+            <div className="absolute bottom-20 right-5 z-20 hidden gap-1.5 sm:flex md:right-10 lg:right-16">
                 <button
                     type="button"
                     onClick={() => goTo(current - 1)}

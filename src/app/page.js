@@ -3,14 +3,13 @@ import HeroSlider from "./components/HeroSlider";
 import IntroSection from "./components/IntroSection";
 import CoreTechnologies from "./components/CoreTechnologies";
 import IndustrySolutions from "./components/IndustrySolutions";
+import HighlightsSection from "./components/HighlightsSection";
 import ProjectsSection from "./components/ProjectsSection";
-import WhySection from "./components/WhySection";
-import StatsSection from "./components/StatsSection";
-import FocusSlider from "./components/FocusSlider";
 import ClientsSection from "./components/ClientsSection";
-import ContactSection from "./components/ContactSection";
+import FeatureStory from "./components/FeatureStory";
 import Footer from "./components/Footer";
 import ContactButton from "./components/ContactButton";
+import AosInit from "./components/AosInit";
 
 export default function Home() {
   return (
@@ -21,15 +20,14 @@ export default function Home() {
         <IntroSection />
         <CoreTechnologies />
         <IndustrySolutions />
+        <HighlightsSection />
         <ProjectsSection />
-        <WhySection />
-        <StatsSection />
-        <FocusSlider />
         <ClientsSection />
-        <ContactSection />
+        <FeatureStory />
       </main>
       <Footer />
       <ContactButton />
+      <AosInit />
     </>
   );
 }

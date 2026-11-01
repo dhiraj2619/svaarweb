@@ -3,7 +3,7 @@
 
 export const technologies = [
   {
-    title: "Evaporation Systems",
+    title: "Evaporation",
     text: "Efficient liquid concentration and solvent recovery",
     image: "/banners/banner2.jpg",
   },

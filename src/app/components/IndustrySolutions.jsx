@@ -3,102 +3,97 @@
 import { useState } from "react";
 import Image from "next/image";
 import { industries } from "../data/industries";
+import { technologies } from "../data/technologies";
 
-function ArrowRight({ className = "h-4 w-4" }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+const tabs = [
+  {
+    id: "industries",
+    label: "Industries we serve",
+    heading: "Solutions for your industry",
+    intro: "Integrated process plants for products, by-products and recovery, built around how your material behaves.",
+    items: industries,
+    href: "#contact",
+  },
+  {
+    id: "technologies",
+    label: "Technology finder",
+    heading: "Explore our core technologies",
+    intro: "Find the evaporation, drying and recovery technology that fits your process.",
+    items: technologies,
+    href: "#technologies",
+  },
+];
 
 export default function IndustrySolutions() {
   const [active, setActive] = useState(0);
-  const item = industries[active];
+  const tab = tabs[active];
 
   return (
-    <section id="industries" className="bg-white px-5 py-24 md:px-10 lg:px-16 lg:py-32">
-      <div className="mx-auto max-w-[1320px]">
-        <div className="max-w-[900px]">
-          <h2 className="text-[32px] font-normal leading-tight text-[#1a1a1a] sm:text-[40px] lg:text-[46px]">
-            Solutions for Your Industry
-          </h2>
-          <p className="mt-6 text-[18px] leading-[1.6] text-[#555] sm:text-[21px]">
-            Integrated process plants for products, by-products and recovery. Every process is evaluated for
-            material behaviour, energy use, product quality and long-term operating reliability.
-          </p>
+    <section id="industries" className="relative isolate overflow-hidden py-24 lg:py-32">
+      {/* Background photo */}
+      <div className="absolute inset-0 -z-10" aria-hidden="true">
+        <Image src="/banners/banner3.jpg" alt="" fill sizes="100vw" className="object-cover" />
+        <div className="absolute inset-0 bg-[#111316]/30" />
+      </div>
+
+      <div className="mx-auto max-w-[1320px] px-5 md:px-10 lg:px-16" data-aos="fade-up">
+        {/* Tabs */}
+        <div role="tablist" aria-label="Explore SVAAR" className="flex">
+          {tabs.map((t, i) => {
+            const isActive = i === active;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                id={`explore-tab-${t.id}`}
+                aria-selected={isActive}
+                aria-controls="explore-panel"
+                onClick={() => setActive(i)}
+                className={`px-5 py-4 text-left text-[15px] font-medium text-white transition-colors sm:px-8 sm:py-6 sm:text-[20px] lg:px-14 lg:py-8 lg:text-[24px] ${
+                  isActive ? "bg-[#232f3e]" : "bg-brand hover:bg-brand-dark"
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="mt-14 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-          {/* Industry list */}
-          <ul className="border-t border-[#dcdcdc]" role="tablist" aria-label="Industries">
-            {industries.map((ind, i) => {
-              const isActive = i === active;
-              return (
-                <li key={ind.title} className="border-b border-[#dcdcdc]">
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    aria-controls="industry-panel"
-                    onClick={() => setActive(i)}
-                    onMouseEnter={() => setActive(i)}
-                    className={`group relative flex w-full items-center gap-6 py-4 pl-5 pr-2 text-left transition-colors ${
-                      isActive ? "bg-[#f7f6f3]" : "hover:bg-[#fafafa]"
-                    }`}
-                  >
-                    <span className={`absolute inset-y-0 left-0 w-[3px] ${isActive ? "bg-brand" : "bg-transparent"}`} />
-                    <span className={`w-7 text-[13px] tabular-nums ${isActive ? "text-brand" : "text-[#9a9a9a]"}`}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className={`flex-1 text-[18px] sm:text-[20px] ${isActive ? "text-[#1a1a1a]" : "text-[#4a4a4a]"}`}>
-                      {ind.title}
-                    </span>
-                    <ArrowRight className={`h-5 w-5 ${isActive ? "text-brand" : "text-[#c4c4c4] group-hover:text-[#1a1a1a]"}`} />
-                  </button>
+        {/* Panel */}
+        <div
+          id="explore-panel"
+          role="tabpanel"
+          aria-labelledby={`explore-tab-${tab.id}`}
+          className="bg-[#232f3e] px-5 py-12 text-white sm:px-8 lg:px-14 lg:py-20"
+        >
+          <div key={tab.id} className="industry-reveal">
+            <h2 className="text-[34px] font-semibold leading-[1.05] tracking-tight sm:text-[48px] lg:text-[64px]">
+              {tab.heading}
+            </h2>
+            <p className="mt-6 max-w-[640px] text-[16px] leading-[1.6] text-white/80 sm:text-[19px]">{tab.intro}</p>
+
+            <ul className="mt-12 grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:mt-16 lg:grid-cols-5 lg:gap-x-7 lg:gap-y-14">
+              {tab.items.map((item) => (
+                <li key={item.title}>
+                  <a href={tab.href} className="group block" title={item.text}>
+                    <div className="relative aspect-square overflow-hidden bg-white/5">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="(min-width: 1024px) 240px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-brand transition-transform duration-500 group-hover:scale-x-100" />
+                    </div>
+                    <h3 className="mt-4 text-[15px] font-semibold uppercase leading-snug tracking-wide sm:text-[17px]">
+                      {item.title}
+                    </h3>
+                  </a>
                 </li>
-              );
-            })}
-          </ul>
-
-          {/* Detail panel */}
-          <div id="industry-panel" role="tabpanel" className="lg:sticky lg:top-[calc(var(--nav-height)+24px)] lg:self-start">
-            <div className="relative aspect-[16/10] overflow-hidden bg-[#e9e9e9] [clip-path:polygon(0_0,100%_0,100%_calc(100%-36px),calc(100%-36px)_100%,0_100%)]">
-              {industries.map((ind, i) => (
-                <Image
-                  key={ind.title}
-                  src={ind.image}
-                  alt={i === active ? ind.title : ""}
-                  fill
-                  sizes="(min-width:1024px) 55vw, 100vw"
-                  className={`object-cover transition-opacity duration-500 ${i === active ? "opacity-100" : "opacity-0"}`}
-                />
               ))}
-            </div>
-
-            <div className="mt-8">
-              <h3 className="text-[26px] text-[#1a1a1a] sm:text-[30px]">{item.title}</h3>
-              <p className="mt-3 max-w-[620px] text-[17px] leading-[1.6] text-[#4a4a4a]">{item.text}</p>
-
-              <p className="mt-7 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a8a8a]">
-                Technologies used
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {item.tech.map((t) => (
-                  <li key={t} className="border border-[#d6d6d6] px-3.5 py-1.5 text-[14px] text-[#2a2a2a]">
-                    {t}
-                  </li>
-                ))}
-              </ul>
-
-              <a
-                href="#contact"
-                className="group mt-9 inline-flex items-center gap-2 text-[16px] font-medium text-brand"
-              >
-                Discuss a {item.title.toLowerCase()} project
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </a>
-            </div>
+            </ul>
           </div>
         </div>
       </div>

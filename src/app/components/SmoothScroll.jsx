@@ -2,9 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import AOS from "aos";
 import "lenis/dist/lenis.css";
-import "aos/dist/aos.css";
 
 export default function SmoothScroll({ children }) {
   useEffect(() => {
@@ -24,20 +22,7 @@ export default function SmoothScroll({ children }) {
     // let other components (e.g. the mobile drawer) pause/resume scrolling
     window.lenis = lenis;
 
-    AOS.init({
-      duration: 800,
-      easing: "ease-out-cubic",
-      once: true,
-      offset: 80,
-      disable: reduceMotion,
-    });
-
-    // recalc AOS positions once images/fonts settle
-    const refresh = () => AOS.refresh();
-    window.addEventListener("load", refresh);
-
     return () => {
-      window.removeEventListener("load", refresh);
       lenis?.destroy();
       window.lenis = undefined;
     };
